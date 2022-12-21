@@ -66,7 +66,10 @@ const getUserNfts = async (userAddress, getChain) => {
 
 const getAllNftTransations = async (userAddress, getChain) => {
     if (userAddress.length < 18) {
+        console.log("userAddressLength: ", userAddress)
         userAddress = await alchemy.core.resolveName(userAddress);
+        console.log("userAddressLength: ", userAddress)
+
     }
     let returnData = []
     let nextpage = true;
@@ -76,12 +79,13 @@ const getAllNftTransations = async (userAddress, getChain) => {
         }
     };
     console.log("one", userAddress);
-
-    let URL = `https://api.nftport.xyz/v0/transactions/accounts/${userAddress}?chain=${getChain}&page_size=50&type=all`
+    let URL = `https://api.nftport.xyz/v0/transactions/accounts/0xf5663d0eee3620c4a88e28e392aac72d077a8c4d?chain=ethereum&page_size=50&type=all`
+    // let URL = `https://api.nftport.xyz/v0/transactions/accounts/${userAddress}?chain=${getChain}&page_size=50&type=all`
     const resp = await axios.get(
         URL, options
     );
     console.log(resp.data)
+
     // if (resp.data.continuation == undefined) {
     //     nextpage = false;
     // }
@@ -93,20 +97,20 @@ const getAllNftTransations = async (userAddress, getChain) => {
 
 
 }
-const GetDetailNFTtransactions = async () => {
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            Authorization: 'd070c4b4-c972-4b32-9ee8-96439e6cdf72'
-        }
-    };
+// const GetDetailNFTtransactions = async () => {
+//     const options = {
+//         method: 'GET',
+//         headers: {
+//             accept: 'application/json',
+//             Authorization: 'd070c4b4-c972-4b32-9ee8-96439e6cdf72'
+//         }
+//     };
 
-    fetch('https://api.nftport.xyz/v0/transactions/accounts/0xf5663d0eee3620c4a88e28e392aac72d077a8c4d?chain=ethereum&page_size=50&type=all', options)
-        .then(response => response.json())
-        .then(response => console.log(response))
-        .catch(err => console.error(err));
-}
+//     fetch('https://api.nftport.xyz/v0/transactions/accounts/0xf5663d0eee3620c4a88e28e392aac72d077a8c4d?chain=ethereum&page_size=50&type=all', options)
+//         .then(response => response.json())
+//         .then(response => console.log(response))
+//         .catch(err => console.error(err));
+// }
 
 const getRugOrprofit = async (arrayOftxns) => {
 
@@ -119,8 +123,8 @@ const getNFTPriceWithId = async (contractAddress, getChain, getId) => {
 
 //getUserNfts("lazypoet.eth", "ethereum")
 
-// getAllNftTransations("lazypoet.eth", "ethereum")
+getAllNftTransations("lazypoet.eth", "ethereum")
 
 // getNFTPriceWithId("", "", "")
 
-GetDetailNFTtransactions()
+// GetDetailNFTtransactions()

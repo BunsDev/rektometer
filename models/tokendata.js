@@ -11,21 +11,29 @@ const settings = {
 const alchemy = new Alchemy(settings);
 
 const query = new URLSearchParams({
-    verified: 'false',
+    verified: '',
     chainId: 'false',
     token: 'false',
     auth_key: process.env.UNMARSHAL_KEY
 }).toString();
 
 const getCurrentTokenBalance = async (userAddress, getChain) => {
-    const chain = getChain;
-    const address = userAddress;
+    let verifiedToken = [];
+    let nonVerifiedToken = [];
     const resp = await axios.get(
-        `https://api.unmarshal.com/v1/${chain}/address/${address}/assets?${query}`,
+        `https://api.unmarshal.com/v1/${getChain}/address/${userAddress}/assets?${query}`,
     );
 
     // const data = await resp.data;
+    console.log(resp.data.length);
     console.log(resp.data);
+    for (let i = 0; i < resp.data.length; i++) {
+        if (resp.data[i].verified == true) {
+            verifiedToken.push(resp.data[i])
+        } else {
+            nonVerifiedToken.push(resp.data[i])
+        }
+    }
 }
 
 
@@ -35,7 +43,7 @@ const getTransactionsHistoryWithPrice = async (userAddress, getChain) => {
         pageSize: '25',
         contract: '',
         fromBlock: 0,
-        toBlock: getLatestBlockNumber(),
+        toBlock: 9999999,
         auth_key: process.env.UNMARSHAL_KEY
     }).toString();
 
@@ -51,24 +59,15 @@ const getTransactionsHistoryWithPrice = async (userAddress, getChain) => {
 const getProfitLossWithTokenAddress = async (userAddress, getChain, tokenAddress) => {
     const query = new URLSearchParams({
         contract: tokenAddress,
-        auth_key: 'mJUMS0d06uVI6FU6McyZ1OJJZEFKqF6f2sAtMkc0'
+        auth_key: process.env.UNMARSHAL_KEY
     }).toString();
 
-    const address = userAddress;
-    const chain = getChain;
-    const resp = await fetch(
-        `https://api.unmarshal.com/v2/${chain}/address/${address}/userData?${query}`,
-        {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({})
-        }
+    const resp = await axios.get(
+        `https://api.unmarshal.com/v2/${getChain}/address/${userAddress}/userData?${query}`
     );
 
-    const data = await resp.json();
-    console.log(data);
+    // const data = await resp.json();
+    console.log(resp.data);
 
 }
 
@@ -79,5 +78,7 @@ const getLatestBlockNumber = async () => {
     return latestBlock;
 
 }
+let allChains = ["ethereum", "bsc", "matic", "celo", "arbitrum", "avalanche", "xinfin", "cronos", "velas", "zilliqa", "fantom", "fuse"]
 
-getLatestBlockNumber()
+// getCurrentTokenBalance("0x7D1c8E35fa16Ee32f11a882B3E634cCbaE07b790", "ethereum")
+getProfitLossWithTokenAddress("0x7D1c8E35fa16Ee32f11a882B3E634cCbaE07b790", "ethereum", "0x8c6fa66c21ae3fc435790e451946a9ea82e6e523")
